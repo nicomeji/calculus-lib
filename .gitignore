@@ -15,3 +15,7 @@
 # Traget directory
 target/
 
+# Eclipse IDE files:
+.cproject
+.project
+
