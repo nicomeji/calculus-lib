@@ -33,3 +33,4 @@ class Number {
 std::ostream & operator<< (std::ostream & o, const Number & num) {
    return o << num.number;
 };
+
