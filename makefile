@@ -1,22 +1,14 @@
-SRC_DIR      = src
-HEADERS_DIR  = inc
 TARGET_DIR   = target
 PROG_NM      = hello_world
 
-EXTENTION   = .cc
 CXX         = g++
 CXXFLAGS    = -std=c++11
-CPPFLAGS    = -I $(HEADERS_DIR) -MMD -MP
+CPPFLAGS    = -I inc -MMD -MP
 
-SOURCES      = $(shell find "$(SRC_DIR)" -name "*$(EXTENTION)";)
-OBJECTS      = $(addprefix $(TARGET_DIR)/, $(patsubst %$(EXTENTION), %.o, $(SOURCES)))
-
-define dependency_name
-$(patsubst %.o, %.d, $(1))
-endef
+OBJECTS = $(addprefix $(TARGET_DIR)/, $(patsubst %.cc, %.o, $(shell find src -name "*.cc";)))
 
 .PHONY: clean print-%
-.SUFFIXES: $(EXTENTION) .o .h .d
+.SUFFIXES: .cc .o .h .d
 
 $(TARGET_DIR)/$(PROG_NM): $(OBJECTS)
 	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
@@ -24,7 +16,7 @@ $(TARGET_DIR)/$(PROG_NM): $(OBJECTS)
 # pull in dependency info for *existing* .o files
 -include $(patsubst %.o, %.d, $(OBJECTS))
 
-$(OBJECTS): $(TARGET_DIR)/%.o: %$(EXTENTION)
+$(OBJECTS): $(TARGET_DIR)/%.o: %.cc
 	mkdir -p $(dir $@)
 	$(COMPILE.cc) -o $@ $<
 
