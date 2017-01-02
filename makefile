@@ -18,7 +18,7 @@ $(TARGET_DIR)/$(PROG_NM): $(OBJECTS)
 -include $(patsubst %.o, %.d, $(OBJECTS))
 
 define depend_dir
-$1: $(dir $1)
+$1: | $(dir $1)
 endef
 
 $(foreach obj,$(OBJECTS), $(eval $(call depend_dir, $(obj))))
