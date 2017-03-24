@@ -1,41 +1,36 @@
-SRC_DIR      = src
-HEADERS_DIR  = inc
 TARGET_DIR   = target
-PROG_NM      = hello_wolrd
+PROG_NM      = hello_world
 
-EXTENTION      = .cc
-CXX            = g++
-CPPFLAGS       = -std=c++11
-COMPILE.cc    += -I $(HEADERS_DIR)
+CXX         = g++
+CXXFLAGS    = -std=c++11
+CPPFLAGS    = -I inc -MMD -MP
 
-SOURCES      = $(shell find "$(SRC_DIR)" -name "*$(EXTENTION)";)
-OBJECTS      = $(addprefix $(TARGET_DIR)/, $(patsubst %$(EXTENTION), %.o, $(SOURCES)))
-DEPENDENCIES = $(patsubst %.o, %.mk, $(OBJECTS))
+OBJECTS = $(addprefix $(TARGET_DIR)/, $(patsubst %.cc, %.o, $(shell find src -name "*.cc";)))
+DIRECTORIES = $(sort $(dir $(OBJECTS)))
 
-.PHONY: all depend clean print-%
-.SUFFIXES: $(EXTENTION) .o .h .mk
-
-all: depend $(TARGET_DIR)/$(PROG_NM)
-	@echo $(PROG_NM) created.
-
-depend: $(DEPENDENCIES)
-	@echo Dependencies updated.
-
--include $(DEPENDENCIES)
+.PHONY: clean print-%
+.SUFFIXES: .cc .o .h .d
 
 $(TARGET_DIR)/$(PROG_NM): $(OBJECTS)
 	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
-$(DEPENDENCIES): $(TARGET_DIR)/%.mk: %$(EXTENTION)
-	mkdir -p $(dir $@)
-	$(COMPILE.cc) -MM $^ > $@
+# pull in dependency info for *existing* .o files
+-include $(patsubst %.o, %.d, $(OBJECTS))
 
-$(OBJECTS): $(TARGET_DIR)/%.o: %$(EXTENTION) $(TARGET_DIR)/%.mk
+define depend_dir
+$1: | $(dir $1)
+endef
+
+$(foreach obj,$(OBJECTS), $(eval $(call depend_dir, $(obj))))
+
+$(OBJECTS): $(TARGET_DIR)/%.o: %.cc
 	$(COMPILE.cc) -o $@ $<
+
+$(DIRECTORIES): %:
+	mkdir -p $@
 
 clean:
 	rm -r $(TARGET_DIR)
 
 print-%:
 	@echo '$*=$($*)'
-
