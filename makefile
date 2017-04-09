@@ -1,9 +1,20 @@
-TARGET_DIR   = target
-PROG_NM      = hello_world
+## sudo apt-get install cxxtest
+## sudo apt-get install libopencv-dev python-opencv
+TARGET_DIR  = target
+PROG_NM     = hello_world
 
 CXX         = g++
 CXXFLAGS    = -std=c++11
-CPPFLAGS    = -I inc -MMD -MP
+
+# Include directories for OpenCV can be obtain with the following command:
+# pkg-config --cflags opencv
+CPPFLAGS    = -Iinc -I/usr/include/opencv -MMD -MP
+
+# OpenCV libraries path can be obtain using the following command:
+# pkg-config --libs opencv
+LOADLIBES   = -L/usr/lib/x86_64-linux-gnu -lopencv_calib3d -lopencv_contrib -lopencv_core -lopencv_features2d 
+LOADLIBES  += -lopencv_flann -lopencv_gpu -lopencv_highgui -lopencv_imgproc -lopencv_legacy -lopencv_ml -lopencv_objdetect 
+LOADLIBES  += -lopencv_ocl -lopencv_photo -lopencv_stitching -lopencv_superres -lopencv_ts -lopencv_video -lopencv_videostab
 
 OBJECTS = $(addprefix $(TARGET_DIR)/, $(patsubst %.cc, %.o, $(shell find src -name "*.cc";)))
 DIRECTORIES = $(sort $(dir $(OBJECTS)))
@@ -14,7 +25,7 @@ DIRECTORIES = $(sort $(dir $(OBJECTS)))
 $(TARGET_DIR)/$(PROG_NM): $(OBJECTS)
 	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
-# pull in dependency info for *existing* .o files
+# Pull in dependency info for *existing* .o files
 -include $(patsubst %.o, %.d, $(OBJECTS))
 
 define depend_dir
