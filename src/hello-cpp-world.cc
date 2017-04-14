@@ -7,7 +7,7 @@
 using namespace cv;
 using namespace std;
 
-int main() {
+int my_main() {
 
 	Mat image;
 	string imagePath = "";
