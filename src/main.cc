@@ -1,5 +1,5 @@
 #include "hello-cpp-world.h"
 
 int main(int argc, char *argv[]) {
-	my_main();
+	my_main(argc, argv);
 }

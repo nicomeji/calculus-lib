@@ -1,0 +1,34 @@
+.SUFFIXES: .cc .o .h
+.PHONY: clean print-%
+
+CXX         = g++
+CXXFLAGS    = -std=c++14
+
+ifndef TARGET_DIR
+$(error "TARGET_DIR is not set")
+endif
+
+ifndef SOURCE_FILES
+$(error "SOURCE_FILES is not set")
+endif
+
+OBJECTS = $(addprefix $(TARGET_DIR)/, $(patsubst %.cc, %.o, $(SOURCE_FILES)))
+DIRECTORIES = $(sort $(dir $(OBJECTS)))
+
+define depend_dir
+$1: | $(dir $1)
+endef
+
+$(foreach obj, $(OBJECTS), $(eval $(call depend_dir, $(obj))))
+
+$(DIRECTORIES): %:
+	mkdir -p $@
+
+$(OBJECTS): $(TARGET_DIR)/%.o: %.cc
+	$(COMPILE.cc) -o $@ $<
+
+clean:
+	rm -rf $(TARGET_DIR)
+
+print-%:
+	@echo '$*=$($*)'
