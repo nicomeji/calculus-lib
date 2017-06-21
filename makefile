@@ -1,5 +1,6 @@
 ## sudo apt-get install libopencv-dev python-opencv
 
+export MAIN TARGET_DIR SRC_DIR CPPFLAGS LOADLIBES
 
 CPPFLAGS    = -Iinc -MMD -MP -Wall
 
@@ -13,18 +14,21 @@ LOADLIBES   = -L/usr/lib/x86_64-linux-gnu -lopencv_calib3d -lopencv_contrib -lop
 LOADLIBES  += -lopencv_flann -lopencv_gpu -lopencv_highgui -lopencv_imgproc -lopencv_legacy -lopencv_ml -lopencv_objdetect 
 LOADLIBES  += -lopencv_ocl -lopencv_photo -lopencv_stitching -lopencv_superres -lopencv_ts -lopencv_video -lopencv_videostab
 
-.PHONY: all link
+.PHONY: all link test
 .SUFFIXES: .d
 
 PROG_NM     = hello_world
 MAIN        = src/main.cc
 TARGET_DIR  = target
-all: $(TARGET_DIR)/$(PROG_NM)
+SRC_DIR     = src
 
-SOURCE_FILES = $(shell find src -type f -name "*.cc";)
+all: $(TARGET_DIR)/$(PROG_NM) test
+
 include makefilecommons
 
--include test/makefile $(patsubst %.o, %.d, $(OBJECTS))
+-include $(patsubst %.o, %.d, $(OBJECTS))
 
-$(TARGET_DIR)/$(PROG_NM): $(OBJECTS) | test
+$(eval $(call defineDependency,test))
+
+$(TARGET_DIR)/$(PROG_NM): $(OBJECTS)
 	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@

@@ -1,19 +1,18 @@
-#######################################################
-###################### TEST ###########################
-#######################################################
 ## sudo apt-get install cxxtest
-
-TESTS = $(shell find test -type f -name "*.h";)
-TEST_DIRECTORIES = $(sort $(dir $(TESTS)))
-
-OBJECTS_WITHOUT_MAIN = $(filter-out $(addprefix $(TARGET_DIR)/, $(patsubst %.cc, %.o, $(MAIN))), $(OBJECTS))
 
 .PHONY: test
 
-test: $(TARGET_DIR)/test/testRunner
-	./$(TARGET_DIR)/test/testRunner
+OBJECTS_WITHOUT_MAIN = $(filter-out $(addprefix $(TARGET_DIR)/,$(patsubst %.cc,%.o,$(MAIN))),$(OBJECTS))
+TESTS                = $(shell find test -type f -name "*.h";)
+TEST_DIRECTORIES     = $(sort $(dir $(TESTS)))
+PROG_NM              = testRunner
 
-$(TARGET_DIR)/test/testRunner: $(TARGET_DIR)/test/testRunner.o $(OBJECTS_WITHOUT_MAIN)
+test: $(TARGET_DIR)/$(PROG_NM)
+	./$(TARGET_DIR)/$(PROG_NM)
+
+include makefilecommons
+
+$(TARGET_DIR)/$(PROG_NM): $(TARGET_DIR)/test/testRunner.o $(OBJECTS_WITHOUT_MAIN)
 	$(LINK.cc) -Itest $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 $(TARGET_DIR)/test/testRunner.o: $(TARGET_DIR)/test/testRunner.cc
