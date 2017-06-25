@@ -14,7 +14,7 @@ LOADLIBES   = -L/usr/lib/x86_64-linux-gnu -lopencv_calib3d -lopencv_contrib -lop
 LOADLIBES  += -lopencv_flann -lopencv_gpu -lopencv_highgui -lopencv_imgproc -lopencv_legacy -lopencv_ml -lopencv_objdetect 
 LOADLIBES  += -lopencv_ocl -lopencv_photo -lopencv_stitching -lopencv_superres -lopencv_ts -lopencv_video -lopencv_videostab
 
-.PHONY: all link test
+.PHONY: all link test coverage
 .SUFFIXES: .d
 
 PROG_NM     = hello_world
@@ -22,7 +22,7 @@ MAIN        = src/main.cc
 TARGET_DIR  = target
 SRC_DIR     = src
 
-all: $(TARGET_DIR)/$(PROG_NM) test
+all: $(TARGET_DIR)/$(PROG_NM) coverage
 
 include makefilecommons
 
@@ -32,3 +32,5 @@ $(eval $(call defineDependency,test))
 
 $(TARGET_DIR)/$(PROG_NM): $(OBJECTS)
 	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+coverage: test-coverage
