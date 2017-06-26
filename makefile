@@ -1,4 +1,5 @@
 ## sudo apt-get install libopencv-dev python-opencv
+## sudo apt-get install cxxtest
 
 export MAIN TARGET_DIR SRC_DIR CPPFLAGS LOADLIBES
 
@@ -12,7 +13,7 @@ CPPFLAGS   += -I/usr/include/opencv
 # pkg-config --libs opencv
 LOADLIBES   = -L/usr/lib/x86_64-linux-gnu -lopencv_calib3d -lopencv_contrib -lopencv_core -lopencv_features2d 
 LOADLIBES  += -lopencv_flann -lopencv_gpu -lopencv_highgui -lopencv_imgproc -lopencv_legacy -lopencv_ml -lopencv_objdetect 
-LOADLIBES  += -lopencv_ocl -lopencv_photo -lopencv_stitching -lopencv_superres -lopencv_ts -lopencv_video -lopencv_videostab
+LOADLIBES  += -lopencv_ocl -lopencv_photo -lopencv_stitching -lopencv_superres -lopencv_ts -lopencv_video -lopencv_videostab -lpthread
 
 .PHONY: all link test coverage
 .SUFFIXES: .d

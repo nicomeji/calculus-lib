@@ -1,5 +1,7 @@
-#include "hello-cpp-world.h"
+#include "tests/camToStream.h"
 
 int main(int argc, char *argv[]) {
-	my_main(argc, argv);
+	camToVideoFile();
+
+    return 0;
 }

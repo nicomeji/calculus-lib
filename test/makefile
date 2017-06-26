@@ -26,5 +26,5 @@ $(TARGET_DIR)/test/testRunner.cc: $(TESTS)
 
 coverage: test
 	lcov $(INCLUDED_DIRS) --capture --output-file $(TARGET_DIR)/app.info
-	mkdir $(TARGET_DIR)/coverage
+	mkdir -p $(TARGET_DIR)/coverage
 	genhtml --output-directory $(TARGET_DIR)/coverage $(TARGET_DIR)/app.info
