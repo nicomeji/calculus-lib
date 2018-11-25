@@ -1,0 +1,41 @@
+.PHONY: clean print-%
+.SUFFIXES: .cc .o .h .mk
+
+TARGET  = target
+SRC = $(shell find "src" -type f -name "*.cc";)
+OBJ = $(addprefix $(TARGET)/,$(SRC:cc=o))
+DEP = $(patsubst %.o,%.mk,$(OBJ))
+DIR = $(sort $(dir $(OBJ)))
+
+$(APP): $(OBJ)
+	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
+
+$(DIR): %:
+	mkdir -p $@
+
+define mkrule
+# $1 -> file.cc
+# $2 -> TARGET/file.cc
+$(2:cc=o): $1
+	$(COMPILE.c) -o "$$@" "$$<"
+
+$(2:cc=mk): $1 | $(dir $2)
+	$(COMPILE.c) -MMD -MP -MF "$$@" "$$<"
+endef
+
+define rule
+$(call mkrule,$1,$(addprefix $(TARGET)/,$1))
+endef
+
+$(foreach src,$(SRC),$(eval $(call rule,$(src))))
+
+clean:
+	rm -rf $(TARGET)
+
+print-%:
+	@echo '$*=$($*)'
+
+ifeq (,$(filter clean print-%,$(MAKECMDGOALS)))
+include $(DEP)
+endif
+
