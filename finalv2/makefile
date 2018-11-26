@@ -1,4 +1,6 @@
-APP = /data/data/com.termux/files/home/.bin/hello
+TRG := target
+BIN ?= $(TRG)
+APP := $(BIN)/hello
 
 CPPFLAGS  = -Iinc
 CXX       = g++

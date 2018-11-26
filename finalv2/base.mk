@@ -1,33 +1,19 @@
 .PHONY: clean print-%
 .SUFFIXES: .cc .o .h .mk
 
-TRG := target
 SRC := $(shell find "src" -type f -name "*.cc";)
 OBJ := $(addprefix $(TRG)/,$(SRC:cc=o))
-DEP := $(patsubst %.o,%.mk,$(OBJ))
-DIR := $(sort $(dir $(DEP)))
+DEP := $(OBJ:o=mk)
 
 $(APP): $(OBJ)
 	$(LINK.cc) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
-$(DIR): %:
-	mkdir -p $@
+$(DEP): $(TRG)/%.mk: %.cc
+	$(shell mkdir -p $(dir $@))
+	$(COMPILE.cc) -MMD -MP -MF "$@" "$<"
 
-define mkrule
-# $1 -> file.cc
-# $2 -> TRG/file.cc
-$(2:cc=o): $1 | $(2:cc=mk)
-	$(COMPILE.c) -o "$$@" "$$<"
-
-$(2:cc=mk): $1 | $(dir $2)
-	$(COMPILE.c) -MMD -MP -MF "$$@" "$$<"
-endef
-
-define rule
-$(call mkrule,$1,$(addprefix $(TRG)/,$1))
-endef
-
-$(foreach src,$(SRC),$(eval $(call rule,$(src))))
+$(OBJ): $(TRG)/%.o: %.cc
+	$(COMPILE.cc) -o "$@" "$<"
 
 clean:
 	rm -rf $(TRG)
