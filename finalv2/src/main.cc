@@ -1,5 +1,5 @@
 #include "hello.h"
 
 int main(int argc, char *argv[]) {
-    return my_main(argc, argv);
+    return _main(argc, argv);
 }
